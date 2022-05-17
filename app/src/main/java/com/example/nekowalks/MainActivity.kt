@@ -23,12 +23,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.fragment.fragment
 import com.example.nekowalks.ui.theme.NekoWalksTheme
+
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var shopViewModel = ShopViewModel()
         setContent {
             NekoWalksTheme {
                 // A surface container using the 'background' color from the theme
@@ -87,13 +90,13 @@ class MainActivity : ComponentActivity() {
                                 Modifier.padding(innerPadding)
                             ) {
                                 composable(Screen.Cat.route) {
-                                    Greeting(name = Screen.Cat.route, modifier = Modifier.padding(innerPadding))
+                                    Cat()
                                 }
                                 composable(Screen.Shop.route) {
-                                    Greeting(name = Screen.Shop.route, modifier = Modifier.padding(innerPadding))
+                                    Shop(shopViewModel)
                                 }
                                 composable(Screen.Profile.route) {
-                                    Greeting(name = Screen.Profile.route, modifier = Modifier.padding(innerPadding))
+                                    Profile()
                                 }
                             }
                         }
@@ -102,14 +105,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-@Composable
-fun Greeting(
-    name: String,
-    modifier: Modifier,
-) {
-    Text(text = "Hello $name!", modifier = modifier)
 }
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int) {
@@ -122,6 +117,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    var shopViewModel = ShopViewModel()
     NekoWalksTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -142,7 +138,7 @@ fun DefaultPreview() {
             Scaffold(
                 topBar = {
                     SmallTopAppBar(
-                        title = { Text("Neko Walks") },
+                        title = { Text("Neko Walks", style = MaterialTheme.typography.titleLarge) },
                         actions = {
                             Icon(painter = painterResource(id = R.drawable.ic_round_directions_walk_24), contentDescription = null)
                             Text(text = "0", modifier = Modifier.padding(end = 16.dp))
@@ -179,13 +175,16 @@ fun DefaultPreview() {
                         Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Cat.route) {
-                            Greeting(name = Screen.Cat.route, modifier = Modifier.padding(innerPadding))
+                            //Greeting(name = Screen.Cat.route, modifier = Modifier.padding(innerPadding))
+                            Cat()
                         }
-                        composable(Screen.Shop.route) {
-                            Greeting(name = Screen.Shop.route, modifier = Modifier.padding(innerPadding))
+                        fragment<ShopFragment>(Screen.Shop.route) {
+                            //Greeting(name = Screen.Shop.route, modifier = Modifier.padding(innerPadding))
+
                         }
                         composable(Screen.Profile.route) {
-                            Greeting(name = Screen.Profile.route, modifier = Modifier.padding(innerPadding))
+                            //Greeting(name = Screen.Profile.route, modifier = Modifier.padding(innerPadding))
+                            Profile()
                         }
                     }
                 }
