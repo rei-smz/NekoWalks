@@ -1,13 +1,5 @@
 package com.example.nekowalks
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorManager
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,78 +7,27 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.*
-import androidx.room.Room
-import com.example.nekowalks.database.AppDatabase
-import com.example.nekowalks.database.UserData
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.nekowalks.profile.Profile
-import com.example.nekowalks.profile.ProfileViewModel
-import com.example.nekowalks.shop.ShopViewModel
-import com.example.nekowalks.steps.StepsListener
+import com.example.nekowalks.shop.Shop
 import com.example.nekowalks.ui.theme.NekoWalksTheme
-import kotlinx.coroutines.*
 
-
-class MainActivity : ComponentActivity() {
-    private val shopViewModel by viewModels<ShopViewModel>()
-    private lateinit var sensorManager: SensorManager
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        init()
-        setContent {
-            Main()
-        }
-    }
-
-    private fun init() {
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "app-database"
-        ).build()
-        val userData = UserData(
-            id = 0u,
-            totalSteps = 0u,
-            currentSteps = 0u
-        )
-        val scope = CoroutineScope(Job() + Dispatchers.Main)
-        scope.launch(Dispatchers.IO) {
-            db.userDao().insert(userData)
-        }
-        shopViewModel.setItems(db)
-        ProfileViewModel.setUserData(db)
-        MainViewModel.updateSteps()
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        if (sensor != null) {
-            sensorManager.registerListener(StepsListener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        sensorManager.unregisterListener(StepsListener)
-    }
-}
-
-sealed class Screen(val route: String, @StringRes val resourceId: Int) {
-    object Cat : Screen("Cat", R.string.cat)
-    object Shop : Screen("Shop", R.string.shop)
-    object Profile : Screen("Profile", R.string.profile)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    //val shopItems = ShopItems.getAllItems()
+@OptIn(ExperimentalMaterial3Api::class)
+fun Main() {
+    val steps = MainViewModel.getSteps().observeAsState()
     NekoWalksTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -106,13 +47,9 @@ fun DefaultPreview() {
             )
             Scaffold(
                 topBar = {
-                    SmallTopAppBar(
-                        title = { Text("Neko Walks", style = MaterialTheme.typography.titleLarge) },
-                        actions = {
-                            Icon(painter = painterResource(id = R.drawable.ic_round_directions_walk_24), contentDescription = null)
-                            Text(text = "0", modifier = Modifier.padding(end = 16.dp))
-                        }
-                    )
+                    steps.value?.let {
+                        MyTopBar(steps = it)
+                    }
                 },
                 bottomBar = {
                     NavigationBar {
@@ -148,7 +85,7 @@ fun DefaultPreview() {
                         Cat()
                     }
                     composable(Screen.Shop.route) {
-                        //Shop(shopItems)
+                        Shop()
                     }
                     composable(Screen.Profile.route) {
                         //Greeting(name = Screen.Profile.route, modifier = Modifier.padding(innerPadding))
@@ -160,3 +97,13 @@ fun DefaultPreview() {
     }
 }
 
+@Composable
+fun MyTopBar(steps: UInt) {
+    SmallTopAppBar(
+        title = { Text("Neko Walks", style = MaterialTheme.typography.titleLarge) },
+        actions = {
+            Icon(painter = painterResource(id = R.drawable.ic_round_directions_walk_24), contentDescription = null)
+            Text(text = steps.toString(), modifier = Modifier.padding(end = 16.dp))
+        }
+    )
+}

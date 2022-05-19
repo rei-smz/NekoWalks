@@ -1,4 +1,4 @@
-package com.example.nekowalks
+package com.example.nekowalks.profile
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
