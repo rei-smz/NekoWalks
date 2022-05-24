@@ -10,9 +10,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.nekowalks.cat.Cat
 import com.example.nekowalks.profile.Profile
 import com.example.nekowalks.shop.Shop
 import com.example.nekowalks.ui.theme.NekoWalksTheme
@@ -45,7 +46,9 @@ fun Main() {
                 Icons.Rounded.ShoppingCart,
                 Icons.Rounded.Person
             )
+            val snackbarHostState = remember{ SnackbarHostState() }
             Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
                     steps.value?.let {
                         MyTopBar(steps = it)
@@ -85,7 +88,7 @@ fun Main() {
                         Cat()
                     }
                     composable(Screen.Shop.route) {
-                        Shop()
+                        Shop(snackbarHostState = snackbarHostState)
                     }
                     composable(Screen.Profile.route) {
                         //Greeting(name = Screen.Profile.route, modifier = Modifier.padding(innerPadding))

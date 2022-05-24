@@ -25,14 +25,14 @@ object ProfileViewModel: ViewModel() {
     }
 
     fun increaseCurrentSteps(steps: UInt) {
-        if (userData.value != null) {
-            userData.value!!.currentSteps += steps
-        }
+        userData.value!!.currentSteps += steps
     }
 
     fun decreaseCurrentSteps(steps: UInt) {
-        if (userData.value != null) {
-            userData.value!!.currentSteps -= steps
-        }
+        userData.value!!.currentSteps -= steps
+    }
+
+    fun increaseTotalSteps(steps: UInt) {
+        userData.value!!.totalSteps += steps
     }
 }

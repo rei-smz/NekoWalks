@@ -11,6 +11,7 @@ object StepsListener: SensorEventListener {
         if (event != null) {
             if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
                 ProfileViewModel.increaseCurrentSteps(event.values[0].toUInt())
+                ProfileViewModel.increaseTotalSteps(event.values[0].toUInt())
                 MainViewModel.updateSteps()
             }
         }
