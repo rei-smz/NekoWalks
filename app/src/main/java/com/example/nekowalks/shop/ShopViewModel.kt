@@ -1,25 +1,26 @@
 package com.example.nekowalks.shop
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.*
 import com.example.nekowalks.database.AppDatabase
 import com.example.nekowalks.database.ShopItem
-import kotlinx.coroutines.Dispatchers
+import com.example.nekowalks.database.ShopRepository
 import kotlinx.coroutines.launch
 
-class ShopViewModel: ViewModel() {
-    private val shopItems: MutableLiveData<List<ShopItem>> by lazy {
-        MutableLiveData<List<ShopItem>>()
+class ShopViewModel(application: Application) {
+    private val shopItems: LiveData<List<ShopItem>>
+    private val repository: ShopRepository
+
+    init {
+        val db = AppDatabase.getInstance(application)
+        val shopDao = db.shopDao()
+        repository = ShopRepository(shopDao)
+        shopItems = repository.shopItems
     }
 
-    fun getItems(): MutableLiveData<List<ShopItem>> {
+    fun getItems(): LiveData<List<ShopItem>> {
+        Log.d("ShopViewModel", "${shopItems.value}")
         return shopItems
-    }
-
-    fun setItems(db: AppDatabase) {
-        viewModelScope.launch(Dispatchers.IO) {
-            shopItems.value = db.shopDao().getAll()
-        }
     }
 }

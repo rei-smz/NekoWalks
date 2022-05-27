@@ -1,11 +1,13 @@
 package com.example.nekowalks.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CatDao {
     @Query("SELECT * FROM cat_data")
-    suspend fun getAllData(): List<CatData>
+    fun getAllData(): List<CatData>
 
     @Insert
     suspend fun insert(catData: CatData)

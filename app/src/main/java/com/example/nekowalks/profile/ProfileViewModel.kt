@@ -1,38 +1,56 @@
 package com.example.nekowalks.profile
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.*
 import com.example.nekowalks.database.AppDatabase
+import com.example.nekowalks.database.UserDao
 import com.example.nekowalks.database.UserData
+import com.example.nekowalks.database.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object ProfileViewModel: ViewModel() {
-    private val userData: MutableLiveData<UserData> by lazy {
-        MutableLiveData<UserData>()
+class ProfileViewModel(application: Application): AndroidViewModel(application) {
+    private val userData: MutableLiveData<List<UserData>>
+    private val repository: UserRepository
+
+    init {
+        val db = AppDatabase.getInstance(application)
+        val userDao = db.userDao()
+        repository = UserRepository(userDao)
+        userData = repository.userData
     }
 
-    fun getUserData(): LiveData<UserData> {
+    fun getUserData(): LiveData<List<UserData>> {
         return userData
     }
 
-    fun setUserData(db: AppDatabase) {
-        viewModelScope.launch(Dispatchers.IO) {
-            userData.value = db.userDao().getAllData()[0]
+    fun setUserData() {
+        repository.getUserData()
+    }
+
+    fun storeUserData() {
+        repository.updateUserData()
+    }
+
+    fun increaseCurrentSteps(steps: Int) {
+        if (userData.value != null) {
+            userData.value!![0].currentSteps += steps
         }
+        repository.userData = userData
     }
 
-    fun increaseCurrentSteps(steps: UInt) {
-        userData.value!!.currentSteps += steps
+    fun decreaseCurrentSteps(steps: Int) {
+        if (userData.value != null) {
+            userData.value!![0].currentSteps -= steps
+        }
+        repository.userData = userData
     }
 
-    fun decreaseCurrentSteps(steps: UInt) {
-        userData.value!!.currentSteps -= steps
-    }
-
-    fun increaseTotalSteps(steps: UInt) {
-        userData.value!!.totalSteps += steps
+    fun increaseTotalSteps(steps: Int) {
+        if (userData.value != null) {
+            userData.value!![0].totalSteps += steps
+        }
+        repository.userData = userData
     }
 }

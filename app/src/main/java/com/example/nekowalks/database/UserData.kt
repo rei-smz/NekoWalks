@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user_data")
 data class UserData (
-    @PrimaryKey val id: UInt,
-    @ColumnInfo(name = "total_steps") var totalSteps: UInt,
-    @ColumnInfo(name = "current_steps") var currentSteps: UInt,
+    @PrimaryKey var id: Int,
+    @ColumnInfo(name = "total_steps") var totalSteps: Int,
+    @ColumnInfo(name = "current_steps") var currentSteps: Int,
 )
