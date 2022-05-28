@@ -10,7 +10,9 @@ class CatRepository(private val catDao: CatDao) {
 
     fun updateCatData() {
         coroutineScope.launch(Dispatchers.IO) {
-            catDao.update(catData.value?.get(0)!!)
+            catData.value?.get(0)?.let {
+                catDao.update(it)
+            }
         }
     }
 

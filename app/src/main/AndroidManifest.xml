@@ -4,8 +4,8 @@
     package="com.example.nekowalks">
 
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
-
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="ScopedStorage"
+            android:value="true" />
     </application>
 
 </manifest>

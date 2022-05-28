@@ -43,7 +43,7 @@ fun Main(
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             val navController = rememberNavController()
             val items = listOf(
@@ -120,6 +120,6 @@ fun MyTopBar(steps: Int) {
                 contentDescription = null
             )
             Text(text = steps.toString(), modifier = Modifier.padding(end = 16.dp))
-        }
+        },
     )
 }

@@ -24,10 +24,6 @@ class MainLifeCycle(
         profileViewModel.value.setUserData()
         catViewModel.value.setCatData()
         catViewModel.value.applyUpdatePeriodic()
-        val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-        if (sensor != null) {
-            sensorManager.registerListener(StepsListener(profileViewModel), sensor, SensorManager.SENSOR_DELAY_NORMAL)
-        }
     }
 
     override fun onPause(owner: LifecycleOwner) {
