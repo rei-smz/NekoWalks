@@ -127,15 +127,15 @@ fun confirmPurchase(
         when (type) {
             0 -> {
                 catViewModel.increaseFood(add)
-                catViewModel.applyUpdateOneTime()
+                catViewModel.applyUpdateOneTime(true)
             }
             1 -> {
                 catViewModel.increaseMood(add)
-                catViewModel.applyUpdateOneTime()
+                catViewModel.applyUpdateOneTime(true)
             }
             else -> {
                 catViewModel.increaseWater(add)
-                catViewModel.applyUpdateOneTime()
+                catViewModel.applyUpdateOneTime(true)
             }
         }
         catViewModel.storeCatData()

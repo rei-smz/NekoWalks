@@ -1,17 +1,12 @@
 package com.example.nekowalks
 
-import android.content.Context
-import android.hardware.Sensor
 import android.hardware.SensorManager
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.example.nekowalks.cat.CatViewModel
 import com.example.nekowalks.profile.ProfileViewModel
 import com.example.nekowalks.shop.ShopViewModel
 import com.example.nekowalks.steps.StepsListener
-import kotlinx.coroutines.launch
 
 class MainLifeCycle(
     private val sensorManager: SensorManager,
@@ -23,12 +18,14 @@ class MainLifeCycle(
         super.onCreate(owner)
         profileViewModel.value.setUserData()
         catViewModel.value.setCatData()
-        catViewModel.value.applyUpdatePeriodic()
+        catViewModel.value.applyUpdatePeriodic(false)
+        catViewModel.value.storeCatData()
+        catViewModel.value.setCatData()
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        catViewModel.value.applyUpdateOneTime()
+        catViewModel.value.applyUpdateOneTime(false)
         profileViewModel.value.storeUserData()
         catViewModel.value.storeCatData()
     }
@@ -36,7 +33,8 @@ class MainLifeCycle(
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         profileViewModel.value.setUserData()
-        catViewModel.value.applyUpdateOneTime()
+        catViewModel.value.setCatData()
+        catViewModel.value.applyUpdateOneTime(false)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {

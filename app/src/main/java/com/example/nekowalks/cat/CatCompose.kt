@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nekowalks.ui.theme.NekoWalksTheme
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Composable
 fun Cat(catViewModel: CatViewModel) {
@@ -37,7 +40,7 @@ fun Cat(catViewModel: CatViewModel) {
             targetValue = currentWater,
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
         )
-        catViewModel.applyUpdateOneTime()
+        catViewModel.applyUpdateOneTime(false)
         Column {
             Text(text = "This is Cat Activity")
             Text(text = "Mood")
@@ -47,6 +50,7 @@ fun Cat(catViewModel: CatViewModel) {
             Text(text = "Water")
             LinearProgressIndicator(progress = waterProcess)
             Text(text = "Level: ${it[0].level}")
+            Text(text = "Next level: ${LocalDateTime.ofInstant(Instant.ofEpochMilli(it[0].nextLevelTime), ZoneId.of("UTC+8"))}")
         }
     }
 }

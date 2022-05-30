@@ -28,7 +28,7 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
 
     private val workerManager = WorkManager.getInstance(application)
 
-    private fun createInputDataForUpdater(): Data {
+    private fun createInputDataForUpdater(isChangeNextLevelUp: Boolean): Data {
         val dataBuilder = Data.Builder()
         catData.value?.get(0)?.food?.let {
             dataBuilder.putInt(KEY_CAT_DATA + "_FOOD", it)
@@ -48,14 +48,13 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         catData.value?.get(0)?.level?.let {
             dataBuilder.putInt(KEY_CAT_DATA + "_LEVEL", it)
         }
+        dataBuilder.putBoolean(KEY_CAT_DATA + "_ChangeNextLevelUp", isChangeNextLevelUp)
         return dataBuilder.build()
     }
 
-    internal fun applyUpdatePeriodic() {
-        val t = createInputDataForUpdater()
-        Log.d("CatViewModel", "${catData.value?.get(0)}")
+    internal fun applyUpdatePeriodic(isChangeNextLevelUp: Boolean) {
         val workerRequest = PeriodicWorkRequestBuilder<CatStatusUpdater>(1, TimeUnit.HOURS)
-            .setInputData(t)
+            .setInputData(createInputDataForUpdater(isChangeNextLevelUp))
             .build()
         workerManager.enqueue(workerRequest)
 
@@ -90,9 +89,9 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         })
     }
 
-    internal fun applyUpdateOneTime() {
+    internal fun applyUpdateOneTime(isChangeNextLevelUp: Boolean) {
         val workerRequest = OneTimeWorkRequestBuilder<CatStatusUpdater>()
-            .setInputData(createInputDataForUpdater())
+            .setInputData(createInputDataForUpdater(isChangeNextLevelUp))
             .build()
         workerManager.enqueue(workerRequest)
 
