@@ -66,7 +66,7 @@ fun Shop(
                             Text(text = "确认购买")
                         },
                         text = {
-                            Text(text = "以${item.cost}的价格购买${item.description}？")
+                            Text(text = "以${item.cost}的价格购买${item.name}？")
                         },
                         confirmButton = {
                             TextButton(onClick = {
