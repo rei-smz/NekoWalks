@@ -36,7 +36,11 @@ class CatStatusUpdater(appContext: Context, workerParams: WorkerParameters): Wor
         checkCatStatus()
         checkNextLevelUp()
         if (isChangeNextLevelUp || nextLevelUp == 0L) {
-            changeNextLevelUp()
+            if (isChangeNextLevelUp) {
+                changeNextLevelUp(true)
+            } else {
+                changeNextLevelUp(false)
+            }
         }
         val outputData = createOutputData()
         return Result.success(outputData)
@@ -72,27 +76,39 @@ class CatStatusUpdater(appContext: Context, workerParams: WorkerParameters): Wor
         }
     }
 
-    private fun changeNextLevelUp() {
+    private fun changeNextLevelUp(isDecrease: Boolean = false) {
         val currentTime = Instant.now().toEpochMilli()
-        if (food == 0 || mood == 0 || water == 0) {
-            nextLevelUp = -2L
-        } else if ((food in 26..50) || (mood in 26..50) || (water in 26..50)) {
-            if (nextLevelUp == -2L || nextLevelUp == 0L) {
-                nextLevelUp = currentTime + Duration.ofDays(3).toMillis()
+        if (isDecrease) {
+            nextLevelUp = if (food == 0 || mood == 0 || water == 0) {
+                -2L
+            } else if ((food in 26..50) || (mood in 26..50) || (water in 26..50)) {
+                currentTime + Duration.ofDays(3).toMillis()
+            } else if ((food in 51..75) || (mood in 51..75) || (water in 51..75)) {
+                currentTime + Duration.ofDays(2).toMillis()
             } else {
-                nextLevelUp += Duration.ofDays(3).toMillis()
-            }
-        } else if ((food in 51..75) || (mood in 51..75) || (water in 51..75)) {
-            if (nextLevelUp == -2L || nextLevelUp == 0L) {
-                nextLevelUp = currentTime + Duration.ofDays(2).toMillis()
-            } else {
-                nextLevelUp += Duration.ofDays(2).toMillis()
+                currentTime + Duration.ofDays(1).toMillis()
             }
         } else {
-            if (nextLevelUp == -2L || nextLevelUp == 0L) {
-                nextLevelUp = currentTime + Duration.ofDays(1).toMillis()
+            if (food == 0 || mood == 0 || water == 0) {
+                nextLevelUp = -2L
+            } else if ((food in 26..50) || (mood in 26..50) || (water in 26..50)) {
+                if (nextLevelUp == -2L || nextLevelUp == 0L) {
+                    nextLevelUp = currentTime + Duration.ofDays(3).toMillis()
+                } else {
+                    nextLevelUp += Duration.ofDays(3).toMillis()
+                }
+            } else if ((food in 51..75) || (mood in 51..75) || (water in 51..75)) {
+                if (nextLevelUp == -2L || nextLevelUp == 0L) {
+                    nextLevelUp = currentTime + Duration.ofDays(2).toMillis()
+                } else {
+                    nextLevelUp += Duration.ofDays(2).toMillis()
+                }
             } else {
-                nextLevelUp += Duration.ofDays(1).toMillis()
+                if (nextLevelUp == -2L || nextLevelUp == 0L) {
+                    nextLevelUp = currentTime + Duration.ofDays(1).toMillis()
+                } else {
+                    nextLevelUp += Duration.ofDays(1).toMillis()
+                }
             }
         }
     }

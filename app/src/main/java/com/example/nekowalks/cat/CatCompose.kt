@@ -50,7 +50,11 @@ fun Cat(catViewModel: CatViewModel) {
             Text(text = "Water")
             LinearProgressIndicator(progress = waterProcess)
             Text(text = "Level: ${it[0].level}")
-            Text(text = "Next level: ${LocalDateTime.ofInstant(Instant.ofEpochMilli(it[0].nextLevelTime), ZoneId.of("UTC+8"))}")
+            if (it[0].nextLevelTime != -2L) {
+                Text(text = "Next level: ${LocalDateTime.ofInstant(Instant.ofEpochMilli(it[0].nextLevelTime), ZoneId.of("UTC+8"))}")
+            } else {
+                Text(text = "Stopped")
+            }
         }
     }
 }

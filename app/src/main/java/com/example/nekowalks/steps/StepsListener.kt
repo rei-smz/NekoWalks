@@ -9,14 +9,19 @@ import com.example.nekowalks.profile.ProfileViewModel
 class StepsListener(
     private val profileViewModel: Lazy<ProfileViewModel>,
 ) : SensorEventListener {
+    private var lastValue = -1
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
-            if (event.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
-                Log.d("StepsListener", "Steps: ${event.values[0]}")
-                profileViewModel.value.increaseCurrentSteps(event.values[0].toInt())
-                profileViewModel.value.increaseTotalSteps(event.values[0].toInt())
-                profileViewModel.value.storeUserData()
-                profileViewModel.value.setUserData()
+            if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
+                val value = event.values[0].toInt()
+                Log.d("StepsListener", "Steps: $value")
+                if (value != 0 && lastValue != -1 && value != lastValue) {
+                    profileViewModel.value.increaseCurrentSteps(value - lastValue)
+                    profileViewModel.value.increaseTotalSteps(value - lastValue)
+                    profileViewModel.value.storeUserData()
+                    profileViewModel.value.setUserData()
+                }
+                lastValue = value
             }
         }
     }

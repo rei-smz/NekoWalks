@@ -116,30 +116,77 @@ fun confirmPurchase(
             )
         }
     } else {
-        profileViewModel.decreaseCurrentSteps(cost)
-        profileViewModel.storeUserData()
-        profileViewModel.setUserData()
-        scope.launch {
-            snackbarHostState.showSnackbar(
-                "购买成功"
-            )
+        val catData = catViewModel.getCatData().value?.get(0)
+        catData?.let {
+            when (type) {
+                0 -> {
+                    if (it.food < 100) {
+                        profileViewModel.decreaseCurrentSteps(cost)
+                        profileViewModel.storeUserData()
+                        profileViewModel.setUserData()
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                "购买成功"
+                            )
+                        }
+                        catViewModel.increaseFood(add)
+                        catViewModel.applyUpdateOneTime(true)
+                        catViewModel.storeCatData()
+                        catViewModel.setCatData()
+                    } else {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                "食物已满，购买失败"
+                            )
+                        }
+                    }
+                }
+                1 -> {
+                    if (it.mood < 100) {
+                        profileViewModel.decreaseCurrentSteps(cost)
+                        profileViewModel.storeUserData()
+                        profileViewModel.setUserData()
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                "购买成功"
+                            )
+                        }
+                        catViewModel.increaseMood(add)
+                        catViewModel.applyUpdateOneTime(true)
+                        catViewModel.storeCatData()
+                        catViewModel.setCatData()
+                    } else {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                "心情已满，购买失败"
+                            )
+                        }
+                    }
+                }
+                else -> {
+                    if (it.water < 100) {
+                        profileViewModel.decreaseCurrentSteps(cost)
+                        profileViewModel.storeUserData()
+                        profileViewModel.setUserData()
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                "购买成功"
+                            )
+                        }
+                        catViewModel.increaseWater(add)
+                        catViewModel.applyUpdateOneTime(true)
+                        catViewModel.storeCatData()
+                        catViewModel.setCatData()
+                    } else {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                "水已满，购买失败"
+                            )
+                        }
+                    }
+                }
+            }
         }
-        when (type) {
-            0 -> {
-                catViewModel.increaseFood(add)
-                catViewModel.applyUpdateOneTime(true)
-            }
-            1 -> {
-                catViewModel.increaseMood(add)
-                catViewModel.applyUpdateOneTime(true)
-            }
-            else -> {
-                catViewModel.increaseWater(add)
-                catViewModel.applyUpdateOneTime(true)
-            }
-        }
-        catViewModel.storeCatData()
-        catViewModel.setCatData()
     }
 }
 

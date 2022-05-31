@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
             object : OnPermissionCallback {
                 override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
                     if (all) {
-                        val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+                        val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
                         if (sensor != null) {
                             sensorManager.registerListener(StepsListener(profileViewModel), sensor, SensorManager.SENSOR_DELAY_NORMAL)
                         }
