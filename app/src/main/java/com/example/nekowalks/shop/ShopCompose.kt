@@ -130,7 +130,10 @@ fun confirmPurchase(
                             )
                         }
                         catViewModel.increaseFood(add)
-                        catViewModel.applyUpdateOneTime(true)
+                        val newNextLevel = catViewModel.checkReduce()
+                        if (newNextLevel != 0 || newNextLevel != -2) {
+                            catViewModel.applyReduceNextLevel(newNextLevel)
+                        }
                         catViewModel.storeCatData()
                         catViewModel.setCatData()
                     } else {
@@ -152,7 +155,10 @@ fun confirmPurchase(
                             )
                         }
                         catViewModel.increaseMood(add)
-                        catViewModel.applyUpdateOneTime(true)
+                        val newNextLevel = catViewModel.checkReduce()
+                        if (newNextLevel != 0 || newNextLevel != -2) {
+                            catViewModel.applyReduceNextLevel(newNextLevel)
+                        }
                         catViewModel.storeCatData()
                         catViewModel.setCatData()
                     } else {
@@ -174,7 +180,10 @@ fun confirmPurchase(
                             )
                         }
                         catViewModel.increaseWater(add)
-                        catViewModel.applyUpdateOneTime(true)
+                        val newNextLevel = catViewModel.checkReduce()
+                        if (newNextLevel != 0 || newNextLevel != -2) {
+                            catViewModel.applyReduceNextLevel(newNextLevel)
+                        }
                         catViewModel.storeCatData()
                         catViewModel.setCatData()
                     } else {

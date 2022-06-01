@@ -28,7 +28,7 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
 
     private val workerManager = WorkManager.getInstance(application)
 
-    private fun createInputDataForUpdater(isChangeNextLevelUp: Boolean): Data {
+    private fun createInputDataForStatusUpdater(): Data {
         val dataBuilder = Data.Builder()
         catData.value?.get(0)?.food?.let {
             dataBuilder.putInt(KEY_CAT_DATA + "_FOOD", it)
@@ -42,31 +42,60 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         catData.value?.get(0)?.nextStatusUpdateTime?.let {
             dataBuilder.putLong(KEY_CAT_DATA + "_STATUS", it)
         }
+//        catData.value?.get(0)?.nextLevelTime?.let {
+//            dataBuilder.putLong(KEY_CAT_DATA + "_LevelUp", it)
+//        }
+//        catData.value?.get(0)?.level?.let {
+//            dataBuilder.putInt(KEY_CAT_DATA + "_LEVEL", it)
+//        }
+//        dataBuilder.putBoolean(KEY_CAT_DATA + "_ChangeNextLevelUp", isChangeNextLevelUp)
+        return dataBuilder.build()
+    }
+
+    private fun createInputDataForLevelUpUpdater(): Data {
+        val dataBuilder = Data.Builder()
+        catData.value?.get(0)?.food?.let {
+            dataBuilder.putInt(KEY_CAT_DATA + "_FOOD", it)
+        }
+        catData.value?.get(0)?.mood?.let {
+            dataBuilder.putInt(KEY_CAT_DATA + "_MOOD", it)
+        }
+        catData.value?.get(0)?.water?.let {
+            dataBuilder.putInt(KEY_CAT_DATA + "_WATER", it)
+        }
         catData.value?.get(0)?.nextLevelTime?.let {
             dataBuilder.putLong(KEY_CAT_DATA + "_LevelUp", it)
         }
         catData.value?.get(0)?.level?.let {
             dataBuilder.putInt(KEY_CAT_DATA + "_LEVEL", it)
         }
-        dataBuilder.putBoolean(KEY_CAT_DATA + "_ChangeNextLevelUp", isChangeNextLevelUp)
         return dataBuilder.build()
     }
 
-    internal fun applyUpdatePeriodic(isChangeNextLevelUp: Boolean) {
-        val workerRequest = PeriodicWorkRequestBuilder<CatStatusUpdater>(1, TimeUnit.HOURS)
-            .setInputData(createInputDataForUpdater(isChangeNextLevelUp))
-            .build()
-        workerManager.enqueue(workerRequest)
+    private fun createInputDataForReduceWorker(newNextLevel: Int): Data {
+        val dataBuilder = Data.Builder()
+        dataBuilder.putInt(KEY_CAT_DATA + "_NewNextLevel", newNextLevel)
+        return dataBuilder.build()
+    }
 
-        workerManager.getWorkInfoByIdLiveData(workerRequest.id).observe(lifecycleOwner, Observer {
+    internal fun applyStatusUpdatePeriodic() {
+        val statusUpdaterRequest = PeriodicWorkRequestBuilder<CatStatusUpdater>(1, TimeUnit.HOURS)
+            .setInputData(createInputDataForStatusUpdater())
+            .build()
+        val levelUpdaterRequest = PeriodicWorkRequestBuilder<CatLevelUpdater>(12, TimeUnit.HOURS)
+            .setInputData(createInputDataForLevelUpUpdater())
+            .build()
+        workerManager.enqueue(listOf(statusUpdaterRequest, levelUpdaterRequest))
+
+        workerManager.getWorkInfoByIdLiveData(statusUpdaterRequest.id).observe(lifecycleOwner, Observer {
             if (it.state.isFinished) {
                 val workOutput = it.outputData
                 val newFood = workOutput.getInt(KEY_CAT_DATA + "_FOOD", -1)
                 val newMood = workOutput.getInt(KEY_CAT_DATA + "_MOOD", -1)
                 val newWater = workOutput.getInt(KEY_CAT_DATA + "_WATER", -1)
                 val newStatus = workOutput.getLong(KEY_CAT_DATA + "_STATUS", -1L)
-                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
-                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
+//                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
+//                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
                 if (newFood != -1) {
                     setFood(newFood)
                 }
@@ -76,11 +105,25 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
                 if (newWater != -1) {
                     setWater(newWater)
                 }
-                if (newLevel != -1) {
-                    setLevel(newLevel)
-                }
+//                if (newLevel != -1) {
+//                    setLevel(newLevel)
+//                }
                 if (newStatus != -1L) {
                     setStatusUpdateTime(newStatus)
+                }
+//                if (newLevelUp != -1L) {
+//                    setLevelUpTime(newLevelUp)
+//                }
+            }
+        })
+
+        workerManager.getWorkInfoByIdLiveData(levelUpdaterRequest.id).observe(lifecycleOwner, Observer {
+            if (it.state.isFinished) {
+                val workOutput = it.outputData
+                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
+                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
+                if (newLevel != -1) {
+                    setLevel(newLevel)
                 }
                 if (newLevelUp != -1L) {
                     setLevelUpTime(newLevelUp)
@@ -89,21 +132,24 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         })
     }
 
-    internal fun applyUpdateOneTime(isChangeNextLevelUp: Boolean) {
-        val workerRequest = OneTimeWorkRequestBuilder<CatStatusUpdater>()
-            .setInputData(createInputDataForUpdater(isChangeNextLevelUp))
+    internal fun applyStatusUpdateOneTime() {
+        val statusUpdaterRequest = OneTimeWorkRequestBuilder<CatStatusUpdater>()
+            .setInputData(createInputDataForStatusUpdater())
             .build()
-        workerManager.enqueue(workerRequest)
+        val levelUpdaterRequest = OneTimeWorkRequestBuilder<CatLevelUpdater>()
+            .setInputData(createInputDataForLevelUpUpdater())
+            .build()
+        workerManager.beginWith(statusUpdaterRequest).then(levelUpdaterRequest).enqueue()
 
-        workerManager.getWorkInfoByIdLiveData(workerRequest.id).observe(lifecycleOwner, Observer {
+        workerManager.getWorkInfoByIdLiveData(statusUpdaterRequest.id).observe(lifecycleOwner, Observer {
             if (it.state.isFinished) {
                 val workOutput = it.outputData
                 val newFood = workOutput.getInt(KEY_CAT_DATA + "_FOOD", -1)
                 val newMood = workOutput.getInt(KEY_CAT_DATA + "_MOOD", -1)
                 val newWater = workOutput.getInt(KEY_CAT_DATA + "_WATER", -1)
                 val newStatus = workOutput.getLong(KEY_CAT_DATA + "_STATUS", -1L)
-                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
-                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
+//                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
+//                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
                 if (newFood != -1) {
                     setFood(newFood)
                 }
@@ -113,14 +159,64 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
                 if (newWater != -1) {
                     setWater(newWater)
                 }
-                if (newLevel != -1) {
-                    setLevel(newLevel)
-                }
+//                if (newLevel != -1) {
+//                    setLevel(newLevel)
+//                }
                 if (newStatus != -1L) {
                     setStatusUpdateTime(newStatus)
                 }
+//                if (newLevelUp != -1L) {
+//                    setLevelUpTime(newLevelUp)
+//                }
+            }
+        })
+
+        workerManager.getWorkInfoByIdLiveData(levelUpdaterRequest.id).observe(lifecycleOwner, Observer {
+            if (it.state.isFinished) {
+                val workOutput = it.outputData
+                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
+                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
+                if (newLevel != -1) {
+                    setLevel(newLevel)
+                }
                 if (newLevelUp != -1L) {
                     setLevelUpTime(newLevelUp)
+                }
+            }
+        })
+    }
+
+    fun checkReduce(): Int {
+        catData.value?.get(0)?.let {
+            val food = it.food
+            val mood = it.mood
+            val water = it.water
+            if (food == 0 || mood == 0 || water == 0) {
+                return -2
+            }
+            if ((food in 26..50) || (mood in 26..50) || (water in 26..50)) {
+                return 3
+            }
+            if ((food in 51..75) || (mood in 51..75) || (water in 51..75)) {
+                return 2
+            }
+            return 1
+        }
+        return 0
+    }
+
+    fun applyReduceNextLevel(newNextLevel: Int) {
+        val reduceWorker = OneTimeWorkRequestBuilder<ReduceNextLevelWorker>()
+            .setInputData(createInputDataForReduceWorker(newNextLevel))
+            .build()
+        workerManager.enqueue(reduceWorker)
+
+        workerManager.getWorkInfoByIdLiveData(reduceWorker.id).observe(lifecycleOwner, Observer {
+            if (it.state.isFinished) {
+                val workOutput = it.outputData
+                val newNextLevelTime = workOutput.getLong(KEY_CAT_DATA + "_NewNextLevelTime", -1L)
+                if (newNextLevelTime != -1L) {
+                    setLevelUpTime(newNextLevelTime)
                 }
             }
         })

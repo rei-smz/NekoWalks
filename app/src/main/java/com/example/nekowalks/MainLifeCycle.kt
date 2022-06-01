@@ -10,7 +10,6 @@ import com.example.nekowalks.steps.StepsListener
 
 class MainLifeCycle(
     private val sensorManager: SensorManager,
-    private val shopViewModel: Lazy<ShopViewModel>,
     private val profileViewModel: Lazy<ProfileViewModel>,
     private val catViewModel: Lazy<CatViewModel>
 ): DefaultLifecycleObserver {
@@ -18,14 +17,14 @@ class MainLifeCycle(
         super.onCreate(owner)
         profileViewModel.value.setUserData()
         catViewModel.value.setCatData()
-        catViewModel.value.applyUpdatePeriodic(false)
+        catViewModel.value.applyStatusUpdatePeriodic()
         catViewModel.value.storeCatData()
         catViewModel.value.setCatData()
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        catViewModel.value.applyUpdateOneTime(false)
+        catViewModel.value.applyStatusUpdateOneTime()
         profileViewModel.value.storeUserData()
         catViewModel.value.storeCatData()
     }
@@ -34,7 +33,7 @@ class MainLifeCycle(
         super.onResume(owner)
         profileViewModel.value.setUserData()
         catViewModel.value.setCatData()
-        catViewModel.value.applyUpdateOneTime(false)
+        catViewModel.value.applyStatusUpdateOneTime()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {

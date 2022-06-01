@@ -36,11 +36,9 @@ class MainActivity : ComponentActivity() {
         ShopViewModel(application)
     }
     private val profileViewModel = lazy {
-        //ProfileViewModel(application)
         ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(ProfileViewModel::class.java)
     }
     private val catViewModel = lazy {
-        //CatViewModel(application, lifecycleOwner = this)
         CatViewModelFactory(application, lifecycleOwner = this).create(CatViewModel::class.java)
     }
 
@@ -71,31 +69,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         )
-//        val requestPermissionLauncher = lazy {
-//            registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
-//                if (isGranted) {
-//
-//                }
-//            }
-//        }
-//        when (PackageManager.PERMISSION_GRANTED) {
-//            ContextCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACTIVITY_RECOGNITION
-//            ) -> {
-//                val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-//                if (sensor != null) {
-//                    sensorManager.registerListener(StepsListener(profileViewModel), sensor, SensorManager.SENSOR_DELAY_NORMAL)
-//                }
-//            }
-//            else -> {
-//                requestPermissionLauncher.value.launch(Manifest.permission.ACTIVITY_RECOGNITION)
-//            }
-//        }
         lifecycle.addObserver(
             MainLifeCycle(
                 sensorManager,
-                shopViewModel,
                 profileViewModel,
                 catViewModel
             )
