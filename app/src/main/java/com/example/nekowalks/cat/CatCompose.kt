@@ -40,7 +40,7 @@ fun Cat(catViewModel: CatViewModel) {
             targetValue = currentWater,
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
         )
-        catViewModel.applyUpdateOneTime(false)
+        catViewModel.applyStatusUpdateOneTime()
         Column {
             Text(text = "This is Cat Activity")
             Text(text = "Mood")

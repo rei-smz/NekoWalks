@@ -32,8 +32,9 @@ class MainLifeCycle(
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         profileViewModel.value.setUserData()
-        catViewModel.value.setCatData()
         catViewModel.value.applyStatusUpdateOneTime()
+        catViewModel.value.storeCatData()
+        catViewModel.value.setCatData()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
