@@ -1,22 +1,17 @@
 package com.example.nekowalks
 
-import android.app.Application
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DirectionsWalk
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -57,10 +52,13 @@ fun Main(
                 Icons.Rounded.Person
             )
             val snackbarHostState = remember { SnackbarHostState() }
+            var title by remember { mutableStateOf("NekoWalks") }
             Scaffold(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
-                    userData?.currentSteps?.let { MyTopBar(steps = it) }
+                    userData?.currentSteps?.let {
+                        MyTopBar(steps = it, title = title)
+                    }
                 },
                 bottomBar = {
                     NavigationBar {
@@ -70,6 +68,17 @@ fun Main(
                             NavigationBarItem(
                                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                                 onClick = {
+                                    when (screen.route) {
+                                        Screen.Cat.route -> {
+                                            title = "NekoWalks"
+                                        }
+                                        Screen.Shop.route -> {
+                                            title = "Shop"
+                                        }
+                                        Screen.Profile.route -> {
+                                            title = "Profile"
+                                        }
+                                    }
                                     navController.navigate(screen.route) {
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
@@ -111,12 +120,12 @@ fun Main(
 }
 
 @Composable
-fun MyTopBar(steps: Int) {
+fun MyTopBar(steps: Int, title: String) {
     SmallTopAppBar(
-        title = { Text("Neko Walks", style = MaterialTheme.typography.titleLarge) },
+        title = { Text(title, style = MaterialTheme.typography.titleLarge) },
         actions = {
             Icon(
-                painter = painterResource(id = R.drawable.ic_round_directions_walk_24),
+                Icons.Rounded.DirectionsWalk,
                 contentDescription = null
             )
             Text(text = steps.toString(), modifier = Modifier.padding(end = 16.dp))

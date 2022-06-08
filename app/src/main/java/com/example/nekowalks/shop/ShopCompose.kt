@@ -1,9 +1,7 @@
 package com.example.nekowalks.shop
 
-import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,14 +9,21 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Restaurant
+import androidx.compose.material.icons.rounded.WaterDrop
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.nekowalks.cat.CatViewModel
 import com.example.nekowalks.profile.ProfileViewModel
 import com.example.nekowalks.ui.theme.NekoWalksTheme
@@ -37,25 +42,69 @@ fun Shop(
     val userData = profileViewModel.getUserData().observeAsState()
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    LazyColumn(state = scrollState) {
-        shopItems.value?.let {
-
+    LazyColumn(
+        state = scrollState,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        shopItems.value?.let { it ->
             items(it) { item ->
                 var showDialog by remember {
                     mutableStateOf(false)
                 }
-                Row(Modifier.clickable { showDialog = !showDialog }) {
-                    Column() {
+                Row(
+                    Modifier
+                        .padding(16.dp)
+                        .clickable { showDialog = !showDialog }
+                        .fillMaxWidth()) {
+                    item.type.let { it1 ->
+                        when (it1) {
+                            0 -> {
+                                Icon(
+                                    Icons.Rounded.Restaurant,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxHeight().padding(end = 2.dp)
+                                )
+                            }
+                            1 -> {
+                                Icon(
+                                    Icons.Rounded.Favorite,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxHeight().padding(end = 2.dp)
+                                )
+                            }
+                            2 -> {
+                                Icon(
+                                    Icons.Rounded.WaterDrop,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxHeight().padding(end = 2.dp)
+                                )
+                            }
+                            else -> {}
+                        }
+                    }
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.Start)) {
                         item.name?.let { it1 -> Text(it1, fontWeight = FontWeight.Bold) }
-                        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        CompositionLocalProvider(
+                            LocalContentAlpha provides ContentAlpha.medium,
+                        ) {
                             item.description?.let { it2 ->
-                                Text(it2, style = MaterialTheme.typography.body2)
+                                Text(
+                                    it2,
+                                    style = MaterialTheme.typography.body2
+                                )
                             }
                         }
                     }
-                    Column() {
-                        Text(text = item.cost.toString(), style = MaterialTheme.typography.body1)
-                    }
+                    Text(
+                        text = item.cost.toString(),
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.End)
+                    )
                 }
                 if (showDialog) {
                     AlertDialog(
@@ -203,6 +252,30 @@ fun confirmPurchase(
 @Composable
 fun CatPreview() {
     NekoWalksTheme {
-
+        Column(Modifier.fillMaxWidth()) {
+            Row(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()) {
+                Icon(Icons.Rounded.Favorite, contentDescription = null)
+                Text(text = "aaaaa", modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth(Alignment.Start))
+                Text(text = "bbbbb", modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth(Alignment.End))
+            }
+            Row(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()) {
+                Column() {
+                    Text(text = "aaaaa")
+                }
+                Column(Modifier.padding(end = 10.dp)) {
+                    Text(text = "bbbbb")
+                }
+            }
+        }
     }
 }

@@ -34,6 +34,8 @@ class CatLevelUpdater(appContext: Context, workerParams: WorkerParameters): Work
         if (nextLevelUp != -2L && nextLevelUp != 0L && nextLevelUp < currentTime) {
             level += 1
             changeNextLevelUp(currentTime)
+        } else if (nextLevelUp == 0L) {
+            changeNextLevelUp(currentTime)
         }
     }
 

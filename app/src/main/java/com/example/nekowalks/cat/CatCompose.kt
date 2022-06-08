@@ -2,13 +2,12 @@ package com.example.nekowalks.cat
 
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Restaurant
+import androidx.compose.material.icons.rounded.WaterDrop
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -41,17 +40,33 @@ fun Cat(catViewModel: CatViewModel) {
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
         )
         catViewModel.applyStatusUpdateOneTime()
-        Column {
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(text = "This is Cat Activity")
-            Text(text = "Mood")
-            LinearProgressIndicator(progress = moodProcess)
-            Text(text = "Food")
-            LinearProgressIndicator(progress = foodProcess)
-            Text(text = "Water")
-            LinearProgressIndicator(progress = waterProcess)
-            Text(text = "Level: ${it[0].level}")
+            Row(Modifier.padding(8.dp)) {
+                Icon(Icons.Rounded.Favorite, contentDescription = null)
+                Text(text = "Mood")
+            }
+            LinearProgressIndicator(progress = moodProcess, modifier = Modifier.padding(bottom = 16.dp))
+            Row(Modifier.padding(8.dp)) {
+                Icon(Icons.Rounded.Restaurant, contentDescription = null)
+                Text(text = "Food")
+            }
+            LinearProgressIndicator(progress = foodProcess, modifier = Modifier.padding(bottom = 16.dp))
+            Row(Modifier.padding(8.dp)) {
+                Icon(Icons.Rounded.WaterDrop, contentDescription = null)
+                Text(text = "Water")
+            }
+            LinearProgressIndicator(progress = waterProcess, modifier = Modifier.padding(bottom = 16.dp))
+            Text(text = "Level: ${it[0].level}", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.displaySmall)
             if (it[0].nextLevelTime != -2L) {
-                Text(text = "Next level: ${LocalDateTime.ofInstant(Instant.ofEpochMilli(it[0].nextLevelTime), ZoneId.of("UTC+8"))}")
+                Text(
+                    text = "Next level: ${LocalDateTime.ofInstant(Instant.ofEpochMilli(it[0].nextLevelTime), ZoneId.of("UTC+8"))}",
+                    modifier = Modifier.padding(16.dp),
+                )
             } else {
                 Text(text = "Stopped")
             }
