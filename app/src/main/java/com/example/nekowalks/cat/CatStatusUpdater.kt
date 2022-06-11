@@ -21,7 +21,7 @@ class CatStatusUpdater(appContext: Context, workerParams: WorkerParameters): Wor
         water = inputData.getInt(KEY_CAT_DATA + "_WATER", -1)
         nextStatusUpdate = inputData.getLong(KEY_CAT_DATA + "_STATUS", -1L)
         if (food == -1 || mood == -1 || water == -1 || nextStatusUpdate == -1L) {
-            return Result.failure()
+            return Result.retry()
         }
         checkCatStatus()
         val outputData = createOutputData()

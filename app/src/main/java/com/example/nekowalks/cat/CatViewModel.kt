@@ -3,10 +3,7 @@ package com.example.nekowalks.cat
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.example.nekowalks.database.AppDatabase
 import com.example.nekowalks.database.CatDao
 import com.example.nekowalks.database.CatData
@@ -42,13 +39,6 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         catData.value?.get(0)?.nextStatusUpdateTime?.let {
             dataBuilder.putLong(KEY_CAT_DATA + "_STATUS", it)
         }
-//        catData.value?.get(0)?.nextLevelTime?.let {
-//            dataBuilder.putLong(KEY_CAT_DATA + "_LevelUp", it)
-//        }
-//        catData.value?.get(0)?.level?.let {
-//            dataBuilder.putInt(KEY_CAT_DATA + "_LEVEL", it)
-//        }
-//        dataBuilder.putBoolean(KEY_CAT_DATA + "_ChangeNextLevelUp", isChangeNextLevelUp)
         return dataBuilder.build()
     }
 
@@ -81,9 +71,11 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
     internal fun applyStatusUpdatePeriodic() {
         val statusUpdaterRequest = PeriodicWorkRequestBuilder<CatStatusUpdater>(1, TimeUnit.HOURS)
             .setInputData(createInputDataForStatusUpdater())
+//            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
             .build()
         val levelUpdaterRequest = PeriodicWorkRequestBuilder<CatLevelUpdater>(12, TimeUnit.HOURS)
             .setInputData(createInputDataForLevelUpUpdater())
+//            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
             .build()
         workerManager.enqueue(listOf(statusUpdaterRequest, levelUpdaterRequest))
 
@@ -94,8 +86,6 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
                 val newMood = workOutput.getInt(KEY_CAT_DATA + "_MOOD", -1)
                 val newWater = workOutput.getInt(KEY_CAT_DATA + "_WATER", -1)
                 val newStatus = workOutput.getLong(KEY_CAT_DATA + "_STATUS", -1L)
-//                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
-//                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
                 if (newFood != -1) {
                     setFood(newFood)
                 }
@@ -105,15 +95,9 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
                 if (newWater != -1) {
                     setWater(newWater)
                 }
-//                if (newLevel != -1) {
-//                    setLevel(newLevel)
-//                }
                 if (newStatus != -1L) {
                     setStatusUpdateTime(newStatus)
                 }
-//                if (newLevelUp != -1L) {
-//                    setLevelUpTime(newLevelUp)
-//                }
             }
         })
 
@@ -135,9 +119,11 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
     internal fun applyStatusUpdateOneTime() {
         val statusUpdaterRequest = OneTimeWorkRequestBuilder<CatStatusUpdater>()
             .setInputData(createInputDataForStatusUpdater())
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
             .build()
         val levelUpdaterRequest = OneTimeWorkRequestBuilder<CatLevelUpdater>()
             .setInputData(createInputDataForLevelUpUpdater())
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
             .build()
         workerManager.beginWith(statusUpdaterRequest).then(levelUpdaterRequest).enqueue()
 
@@ -148,8 +134,6 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
                 val newMood = workOutput.getInt(KEY_CAT_DATA + "_MOOD", -1)
                 val newWater = workOutput.getInt(KEY_CAT_DATA + "_WATER", -1)
                 val newStatus = workOutput.getLong(KEY_CAT_DATA + "_STATUS", -1L)
-//                val newLevelUp = workOutput.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
-//                val newLevel = workOutput.getInt(KEY_CAT_DATA + "_LEVEL", -1)
                 if (newFood != -1) {
                     setFood(newFood)
                 }
@@ -159,15 +143,9 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
                 if (newWater != -1) {
                     setWater(newWater)
                 }
-//                if (newLevel != -1) {
-//                    setLevel(newLevel)
-//                }
                 if (newStatus != -1L) {
                     setStatusUpdateTime(newStatus)
                 }
-//                if (newLevelUp != -1L) {
-//                    setLevelUpTime(newLevelUp)
-//                }
             }
         })
 

@@ -22,7 +22,7 @@ class CatLevelUpdater(appContext: Context, workerParams: WorkerParameters): Work
         nextLevelUp = inputData.getLong(KEY_CAT_DATA + "_LevelUp", -1L)
         level = inputData.getInt(KEY_CAT_DATA + "_LEVEL", -1)
         if (nextLevelUp == -1L || level == -1 || food == -1 || mood == -1 || water == -1) {
-            return Result.failure()
+            return Result.retry()
         }
         checkNextLevelUp()
         val output = createOutputData()
