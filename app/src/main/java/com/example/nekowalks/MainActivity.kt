@@ -1,27 +1,18 @@
 package com.example.nekowalks
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-import android.text.BoringLayout
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.nekowalks.cat.CatViewModel
 import com.example.nekowalks.cat.CatViewModelFactory
-import com.example.nekowalks.database.AppDatabase
-import com.example.nekowalks.database.CatRepository
-import com.example.nekowalks.database.ShopRepository
-import com.example.nekowalks.database.UserRepository
 import com.example.nekowalks.profile.ProfileViewModel
 import com.example.nekowalks.shop.ShopViewModel
 import com.example.nekowalks.steps.StepsListener

@@ -2,11 +2,10 @@ package com.example.nekowalks.shop
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
 import com.example.nekowalks.database.AppDatabase
 import com.example.nekowalks.database.ShopItem
 import com.example.nekowalks.database.ShopRepository
-import kotlinx.coroutines.launch
 
 class ShopViewModel(application: Application) {
     private val shopItems: LiveData<List<ShopItem>>

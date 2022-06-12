@@ -1,8 +1,10 @@
 package com.example.nekowalks.database
 
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class CatRepository(private val catDao: CatDao) {
     var catData = MutableLiveData<List<CatData>>()

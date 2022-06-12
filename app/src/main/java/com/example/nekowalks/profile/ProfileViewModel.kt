@@ -1,14 +1,12 @@
 package com.example.nekowalks.profile
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.nekowalks.database.AppDatabase
-import com.example.nekowalks.database.UserDao
 import com.example.nekowalks.database.UserData
 import com.example.nekowalks.database.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class ProfileViewModel(application: Application): AndroidViewModel(application) {
     private val userData: MutableLiveData<List<UserData>>

@@ -1,11 +1,9 @@
 package com.example.nekowalks.cat
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.work.*
 import com.example.nekowalks.database.AppDatabase
-import com.example.nekowalks.database.CatDao
 import com.example.nekowalks.database.CatData
 import com.example.nekowalks.database.CatRepository
 import java.util.concurrent.TimeUnit
@@ -71,11 +69,9 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
     internal fun applyStatusUpdatePeriodic() {
         val statusUpdaterRequest = PeriodicWorkRequestBuilder<CatStatusUpdater>(1, TimeUnit.HOURS)
             .setInputData(createInputDataForStatusUpdater())
-//            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
             .build()
         val levelUpdaterRequest = PeriodicWorkRequestBuilder<CatLevelUpdater>(12, TimeUnit.HOURS)
             .setInputData(createInputDataForLevelUpUpdater())
-//            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
             .build()
         workerManager.enqueue(listOf(statusUpdaterRequest, levelUpdaterRequest))
 
@@ -183,7 +179,7 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         return 0
     }
 
-    fun applyReduceNextLevel(newNextLevel: Int) {
+    internal fun applyReduceNextLevel(newNextLevel: Int) {
         val reduceWorker = OneTimeWorkRequestBuilder<ReduceNextLevelWorker>()
             .setInputData(createInputDataForReduceWorker(newNextLevel))
             .build()

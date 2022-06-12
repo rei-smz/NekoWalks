@@ -5,7 +5,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.example.nekowalks.cat.CatViewModel
 import com.example.nekowalks.profile.ProfileViewModel
-import com.example.nekowalks.shop.ShopViewModel
 import com.example.nekowalks.steps.StepsListener
 
 class MainLifeCycle(
@@ -17,7 +16,6 @@ class MainLifeCycle(
         super.onCreate(owner)
         profileViewModel.value.setUserData()
         catViewModel.value.setCatData()
-//        catViewModel.value.applyStatusUpdateOneTime()
         catViewModel.value.applyStatusUpdatePeriodic()
         catViewModel.value.storeCatData()
         catViewModel.value.setCatData()
@@ -25,7 +23,6 @@ class MainLifeCycle(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-//        catViewModel.value.applyStatusUpdateOneTime()
         profileViewModel.value.storeUserData()
         catViewModel.value.storeCatData()
     }
