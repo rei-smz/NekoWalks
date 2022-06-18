@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        // XXPermissions is a library that allows you to request permissions without blocking the UI thread.
         XXPermissions.with(this).permission(Permission.ACTIVITY_RECOGNITION).request(
             object : OnPermissionCallback {
                 override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         )
+        // lifecycle is a lifecycle owner, it is used to observe the lifecycle of the activity.
         lifecycle.addObserver(
             MainLifeCycle(
                 sensorManager,
@@ -70,11 +72,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             Main(profileViewModel.value, catViewModel.value, shopViewModel.value)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
     }
 }
 

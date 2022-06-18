@@ -27,15 +27,3 @@ fun Profile(viewModel: ProfileViewModel) {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ProfilePreview() {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "current steps", modifier = Modifier.align(Alignment.CenterHorizontally))
-        Text(text = "total steps", modifier = Modifier.align(Alignment.CenterHorizontally))
-    }
-}

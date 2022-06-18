@@ -42,6 +42,12 @@ class CatLevelUpdater(appContext: Context, workerParams: WorkerParameters): Work
     private fun changeNextLevelUp(currentTime: Long) {
         if (food == 0 || mood == 0 || water == 0) {
             nextLevelUp = -2L
+        } else if((food in 1..25) || (mood in 1..25) || (water in 1..25)) {
+            if (nextLevelUp == -2L || nextLevelUp == 0L) {
+                nextLevelUp = currentTime + Duration.ofDays(4).toMillis()
+            } else {
+                nextLevelUp += Duration.ofDays(4).toMillis()
+            }
         } else if ((food in 26..50) || (mood in 26..50) || (water in 26..50)) {
             if (nextLevelUp == -2L || nextLevelUp == 0L) {
                 nextLevelUp = currentTime + Duration.ofDays(3).toMillis()

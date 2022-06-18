@@ -24,7 +24,9 @@ class MainLifeCycle(
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
         profileViewModel.value.storeUserData()
+        catViewModel.value.applyStatusUpdateOneTime()
         catViewModel.value.storeCatData()
+        catViewModel.value.setCatData()
     }
 
     override fun onResume(owner: LifecycleOwner) {

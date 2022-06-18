@@ -53,6 +53,7 @@ fun Main(
             )
             val snackbarHostState = remember { SnackbarHostState() }
             var title by remember { mutableStateOf("NekoWalks") }
+            // Scaffold is a Material Design component that provides a framework for building a UI.
             Scaffold(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
@@ -94,6 +95,7 @@ fun Main(
                     }
                 }
             ) { innerPadding ->
+                // This is where the content of the screen would be.
                 NavHost(
                     navController = navController,
                     startDestination = Screen.Cat.route,

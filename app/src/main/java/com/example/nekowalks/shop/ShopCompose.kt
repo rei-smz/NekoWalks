@@ -51,6 +51,7 @@ fun Shop(
                 var showDialog by remember {
                     mutableStateOf(false)
                 }
+                // Show the list of items.
                 Row(
                     Modifier
                         .padding(16.dp)
@@ -148,6 +149,7 @@ fun Shop(
     }
 }
 
+// This function is called when the user taps the item.
 fun confirmPurchase(
     cost: Int,
     type: Int,

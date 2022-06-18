@@ -10,6 +10,7 @@ import java.time.Instant
 
 private const val KEY_CAT_DATA = "KEY_CAT_DATA"
 
+// Worker that runs periodically or asynchronously to update the cat data.
 class CatStatusUpdater(appContext: Context, workerParams: WorkerParameters): Worker(appContext, workerParams) {
     private var food = -1
     private var mood = -1

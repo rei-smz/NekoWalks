@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+// This is the Repository class that will be used to communicate with the database and get the data from it.
 class CatRepository(private val catDao: CatDao) {
     var catData = MutableLiveData<List<CatData>>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -24,6 +25,7 @@ class CatRepository(private val catDao: CatDao) {
         }
     }
 
+    // This function will be used to get the data from the database.
     private suspend fun asyncGet(): List<CatData> = coroutineScope.async(Dispatchers.IO) {
         return@async catDao.getAllData()
     }.await()

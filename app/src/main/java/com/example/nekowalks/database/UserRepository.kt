@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+// This is the Repository class that will be used to communicate with the database and get the data from it.
 class UserRepository(private val userDao: UserDao) {
 
     var userData = MutableLiveData<List<UserData>>()

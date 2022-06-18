@@ -60,9 +60,10 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
         return dataBuilder.build()
     }
 
-    private fun createInputDataForReduceWorker(newNextLevel: Int): Data {
+    private fun createInputDataForReduceWorker(newNextLevel: Int, nextLevelTime: Long): Data {
         val dataBuilder = Data.Builder()
         dataBuilder.putInt(KEY_CAT_DATA + "_NewNextLevel", newNextLevel)
+        dataBuilder.putLong(KEY_CAT_DATA + "_NextLevelTime", nextLevelTime)
         return dataBuilder.build()
     }
 
@@ -168,6 +169,9 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
             if (food == 0 || mood == 0 || water == 0) {
                 return -2
             }
+            if ((food in 1..25) || (mood in 1..25) || (water in 1..25)) {
+                return 4
+            }
             if ((food in 26..50) || (mood in 26..50) || (water in 26..50)) {
                 return 3
             }
@@ -181,7 +185,7 @@ class CatViewModel(application: Application, private val lifecycleOwner: Lifecyc
 
     internal fun applyReduceNextLevel(newNextLevel: Int) {
         val reduceWorker = OneTimeWorkRequestBuilder<ReduceNextLevelWorker>()
-            .setInputData(createInputDataForReduceWorker(newNextLevel))
+            .setInputData(createInputDataForReduceWorker(newNextLevel, catData.value?.get(0)?.nextLevelTime ?: -1L))
             .build()
         workerManager.enqueue(reduceWorker)
 

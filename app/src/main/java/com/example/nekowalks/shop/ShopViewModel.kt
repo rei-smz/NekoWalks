@@ -1,7 +1,6 @@
 package com.example.nekowalks.shop
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.nekowalks.database.AppDatabase
 import com.example.nekowalks.database.ShopItem
@@ -19,7 +18,6 @@ class ShopViewModel(application: Application) {
     }
 
     fun getItems(): LiveData<List<ShopItem>> {
-        Log.d("ShopViewModel", "${shopItems.value}")
         return shopItems
     }
 }

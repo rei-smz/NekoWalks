@@ -53,6 +53,7 @@ fun Cat(catViewModel: CatViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // This Box is used to show the cat's image.
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -62,6 +63,7 @@ fun Cat(catViewModel: CatViewModel) {
             ) {
                 CatImage(Modifier.fillMaxSize())
             }
+            // These Rows are used to show the cat's mood, food, and water.
             Row(Modifier.padding(8.dp)) {
                 Icon(Icons.Rounded.Favorite, contentDescription = null)
                 Text(text = "Mood")
@@ -77,6 +79,7 @@ fun Cat(catViewModel: CatViewModel) {
                 Text(text = "Water")
             }
             LinearProgressIndicator(progress = waterProcess, modifier = Modifier.padding(bottom = 16.dp))
+            // These Texts are used to show the cat's level and next level time.
             Text(text = "Level: $level", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.displaySmall)
             if (nextLevelTime != -2L) {
                 Text(
